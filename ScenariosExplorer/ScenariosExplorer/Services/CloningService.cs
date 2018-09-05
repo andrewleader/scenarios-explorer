@@ -1,4 +1,5 @@
-﻿using ScenariosExplorer.ApplicationSettings;
+﻿using LibGit2Sharp;
+using ScenariosExplorer.ApplicationSettings;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -81,29 +82,17 @@ namespace ScenariosExplorer.Services
                 return task;
             }
 
-            private string CreateGitHubZipUrl()
+            private string CreateGitHubUrl()
             {
-                return $"https://github.com/{Repo.Owner}/{Repo.RepositoryName}/archive/{Repo.Branch}.zip";
+                return $"https://github.com/{Repo.Owner}/{Repo.RepositoryName}";
             }
 
             private async Task ActuallyCloneAsyncHelper()
             {
                 try
                 {
-                    string tempFile = Path.GetTempFileName();
-                    using (var client = new HttpClient())
-                    {
-                        using (var stream = await client.GetStreamAsync(CreateGitHubZipUrl()))
-                        {
-                            using (var fileStream = File.OpenWrite(tempFile))
-                            {
-                                await stream.CopyToAsync(fileStream);
-                            }
-                        }
-                    }
-
-                    ZipFile.ExtractToDirectory(tempFile, ContentService.GetExtractDestinationFolder(Repo), overwriteFiles: true);
-                    File.Delete(tempFile);
+                    await ContentService.DeleteCacheAsync(Repo);
+                    string clonedRepoPath = Repository.Clone(CreateGitHubUrl(), ContentService.GetRepoFolder(Repo), new CloneOptions() { BranchName = Repo.Branch });
                 }
                 finally
                 {
