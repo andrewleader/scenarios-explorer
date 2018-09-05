@@ -43,7 +43,7 @@ namespace ScenariosExplorer.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IAsyncResult> EditScenario(string id, ScenarioModel model)
+        public async Task<IActionResult> EditScenario(string id, ScenarioModel model)
         {
             return Redirect("/scenarios");
         }
