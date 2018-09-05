@@ -1,0 +1,16 @@
+﻿@model ScenariosExplorer.Models.ScenariosModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h2>Scenarios</h2>
+
+@foreach (var item in Model.Scenarios)
+{
+    @Html.Partial("_ScenarioListItem", item)
+}
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>

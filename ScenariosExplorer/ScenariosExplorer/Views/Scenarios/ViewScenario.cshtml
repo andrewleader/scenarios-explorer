@@ -1,0 +1,36 @@
+﻿@model ScenariosExplorer.Models.ScenarioModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+@if (Model.Parent != null)
+{
+    foreach (var ancestor in Model.GetAncestors())
+    {
+        <span><a href="/scenarios/@ancestor.Id">@ancestor.Title</a> ->&nbsp;</span>
+    }
+}
+
+<h2>@Model.Title</h2>
+
+<div>
+    <hr />
+
+    <markdown>
+        @Model.Contents
+    </markdown>
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@if (Model.ChildrenScenarios.Any())
+{
+    <h4>Children scenarios</h4>
+    @foreach (var item in Model.ChildrenScenarios)
+    {
+        @Html.Partial("_ScenarioListItem", item)
+    }
+}
