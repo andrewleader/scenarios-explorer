@@ -39,3 +39,9 @@
     padding: 1em;
     display: block;
 }
+
+pre {
+    background: initial !important;
+    border: initial !important;
+    padding: 0 !important;
+}
