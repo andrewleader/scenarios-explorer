@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using ScenariosExplorer.ApplicationSettings;
 using ScenariosExplorer.Models;
+using ScenariosExplorer.Services;
 
 namespace ScenariosExplorer.Controllers
 {
@@ -32,6 +34,12 @@ namespace ScenariosExplorer.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public async Task<IActionResult> Refresh()
+        {
+            await ContentService.DeleteCacheAsync(AppSettings.DefaultGitHubRepo);
+            return RedirectToAction(actionName: nameof(ScenariosController.Index), controllerName: nameof(ScenariosController));
         }
     }
 }

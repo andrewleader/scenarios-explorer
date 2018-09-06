@@ -12,6 +12,8 @@ namespace ScenariosExplorer
 {
     public class Startup
     {
+        public static string PersonalAccessToken { get; private set; }
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -23,12 +25,14 @@ namespace ScenariosExplorer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            AppSettings.DefaultGitHubRepo = Configuration.GetSection("DefaultGitHubRepo").Get<GitHubRepo>();
+            AppSettings.DefaultGitHubRepo = Configuration.GetSection("DefaultGitHubRepo").Get<RepoInfo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            PersonalAccessToken = Configuration["PersonalAccessToken"];
+
             if (env.IsDevelopment())
             {
                 app.UseBrowserLink();

@@ -9,14 +9,14 @@ namespace ScenariosExplorer.Services
 {
     public class ContentService
     {
-        public GitHubRepo Repo { get; private set; }
+        public RepoInfo Repo { get; private set; }
 
-        public ContentService(GitHubRepo repo)
+        public ContentService(RepoInfo repo)
         {
             Repo = repo;
         }
 
-        public static async Task<ContentService> GetAsync(GitHubRepo repo)
+        public static async Task<ContentService> GetAsync(RepoInfo repo)
         {
             if (!Directory.Exists(GetRepoFolder(repo)))
             {
@@ -26,7 +26,7 @@ namespace ScenariosExplorer.Services
             return new ContentService(repo);
         }
 
-        public static async Task DeleteCacheAsync(GitHubRepo repo)
+        public static async Task DeleteCacheAsync(RepoInfo repo)
         {
             try
             {
@@ -61,17 +61,23 @@ namespace ScenariosExplorer.Services
 
         public async Task<string> GetFileContentsAsync(string path)
         {
-            return await File.ReadAllTextAsync(GetRepoFolder(Repo) + "\\" + path);
+            return await File.ReadAllTextAsync(GetFilePath(path));
         }
 
-        public static string GetExtractDestinationFolder(GitHubRepo repo)
+        public string GetFilePath(string subpath)
         {
-            return Environment.GetEnvironmentVariable("LocalAppData") + $"\\Repos\\{repo.Owner}";
+            return GetRepoFolder(Repo) + "\\" + subpath;
         }
 
-        public static string GetRepoFolder(GitHubRepo repo)
+        public static string GetExtractDestinationFolder(RepoInfo repo)
         {
-            return GetExtractDestinationFolder(repo) + $"\\{repo.RepositoryName}-{repo.Branch}";
+            string answer = Environment.GetEnvironmentVariable("LocalAppData") + $"\\Repos\\{repo.UrlHash()}";
+            return answer;
+        }
+
+        public static string GetRepoFolder(RepoInfo repo)
+        {
+            return GetExtractDestinationFolder(repo) + $"\\{repo.Branch}";
         }
     }
 }

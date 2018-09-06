@@ -8,7 +8,12 @@ namespace ScenariosExplorer.Models
 {
     public class ScenarioModel : BaseContentsModel
     {
-        public ScenarioModel(MapScenarioModel source, GitHubRepo repo, ScenarioModel parent)
+        /// <summary>
+        /// For editing purposes
+        /// </summary>
+        public ScenarioModel() : base(null, null) { }
+
+        public ScenarioModel(MapScenarioModel source, MapModel map, RepoInfo repo, ScenarioModel parent)
             : base(source.Id, repo)
         {
             Title = source.Title;
@@ -19,15 +24,23 @@ namespace ScenariosExplorer.Models
             {
                 foreach (var childScenario in source.Children)
                 {
-                    ChildrenScenarios.Add(new ScenarioModel(childScenario, repo, this));
+                    ChildrenScenarios.Add(new ScenarioModel(childScenario, map, repo, this));
                 }
             }
 
-            if (source.Proposals != null)
+            if (source.ProposalExamples != null)
             {
-                foreach (var proposal in source.Proposals)
+                foreach (var proposal in source.ProposalExamples)
                 {
-                    Proposals.Add(new ProposalModel(proposal, repo));
+                    var p = new ProposalExampleModel(this, proposal, map, repo);
+                    if (p.Info != null)
+                    {
+                        // Don't allow duplicate proposals
+                        if (!Proposals.Any(i => i.ProposalId == p.ProposalId))
+                        {
+                            Proposals.Add(p);
+                        }
+                    }
                 }
             }
         }
@@ -38,7 +51,7 @@ namespace ScenariosExplorer.Models
 
         public List<ScenarioModel> ChildrenScenarios { get; set; } = new List<ScenarioModel>();
 
-        public List<ProposalModel> Proposals { get; set; } = new List<ProposalModel>();
+        public List<ProposalExampleModel> Proposals { get; set; } = new List<ProposalExampleModel>();
 
         public ScenarioModel Parent { get; set; }
 
@@ -75,7 +88,7 @@ namespace ScenariosExplorer.Models
             return null;
         }
 
-        public static async Task<ScenarioModel> GetAsync(GitHubRepo repo, string id)
+        public static async Task<ScenarioModel> GetAsync(RepoInfo repo, string id)
         {
             var scenariosModel = await ScenariosModel.GetAsync(repo);
             foreach (var s in scenariosModel.Scenarios)

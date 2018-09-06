@@ -17,7 +17,7 @@ namespace ScenariosExplorer.Services
 
         private List<CloningRequest> m_queue = new List<CloningRequest>();
 
-        public Task CloneAsync(GitHubRepo repo)
+        public Task CloneAsync(RepoInfo repo)
         {
             lock (m_queue)
             {
@@ -46,9 +46,9 @@ namespace ScenariosExplorer.Services
         {
             public Task Task { get; set; }
             private List<CloningRequest> m_queue;
-            public GitHubRepo Repo { get; private set; }
+            public RepoInfo Repo { get; private set; }
 
-            public CloningRequest(GitHubRepo repo, List<CloningRequest> queue)
+            public CloningRequest(RepoInfo repo, List<CloningRequest> queue)
             {
                 Repo = repo;
                 m_queue = queue;
@@ -56,7 +56,7 @@ namespace ScenariosExplorer.Services
                 Task = ActuallyCloneAsync();
             }
 
-            public CloningRequest(GitHubRepo repo, List<CloningRequest> queue, CloningRequest before)
+            public CloningRequest(RepoInfo repo, List<CloningRequest> queue, CloningRequest before)
             {
                 Repo = repo;
                 m_queue = queue;
@@ -82,17 +82,12 @@ namespace ScenariosExplorer.Services
                 return task;
             }
 
-            private string CreateGitHubUrl()
-            {
-                return $"https://github.com/{Repo.Owner}/{Repo.RepositoryName}";
-            }
-
             private async Task ActuallyCloneAsyncHelper()
             {
                 try
                 {
                     await ContentService.DeleteCacheAsync(Repo);
-                    string clonedRepoPath = Repository.Clone(CreateGitHubUrl(), ContentService.GetRepoFolder(Repo), new CloneOptions() { BranchName = Repo.Branch });
+                    string clonedRepoPath = Repository.Clone(Repo.Url, ContentService.GetRepoFolder(Repo), new CloneOptions() { BranchName = Repo.Branch, CredentialsProvider = ChangesService.CredentialsProvider });
                 }
                 finally
                 {

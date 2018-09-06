@@ -13,18 +13,17 @@
 }
 
 <h2>@Model.Title</h2>
+<div>
+    @Html.ActionLink("Edit", "EditScenario", new { id = Model.Id })
+</div>
 
 <div>
     <hr />
 
-    <markdown>
-        @Model.Contents
-    </markdown>
+    <markdown content="@Model.Contents"></markdown>
 </div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+
+<hr />
 
 @if (Model.ChildrenScenarios.Any())
 {
@@ -33,4 +32,26 @@
     {
         @Html.Partial("_ScenarioListItem", item)
     }
+
+    <hr />
 }
+
+<div>
+    @Html.ActionLink("Add child scenario", "AddChildScenario", new { parentId = Model.Id })
+</div>
+
+<hr />
+
+<h3>Proposals</h3>
+
+@if (Model.Proposals != null)
+{
+    @foreach (var p in Model.Proposals)
+    {
+        @Html.Partial("/Views/Proposals/_ProposalExampleListItem.cshtml", p);
+    }
+}
+
+<div>
+    @Html.ActionLink(linkText: "Add proposal example", actionName: "AddProposalExample", controllerName: "Proposals", routeValues: new { scenarioId = Model.Id })
+</div>

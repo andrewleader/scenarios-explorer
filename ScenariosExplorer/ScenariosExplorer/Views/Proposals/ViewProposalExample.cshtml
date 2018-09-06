@@ -1,0 +1,34 @@
+﻿@model ScenariosExplorer.Models.ProposalExampleModel
+
+@{
+    ViewData["Title"] = Model.Info.Title + " - " + Model.ParentScenario.Title;
+}
+
+@if (Model.ParentScenario.Parent != null)
+{
+    foreach (var ancestor in Model.ParentScenario.GetAncestors())
+    {
+        <span><a href="/scenarios/@ancestor.Id">@ancestor.Title</a> ->&nbsp;</span>
+    }
+}
+<span><a href="/scenarios/@Model.ParentScenario.Id">@Model.ParentScenario.Title</a> ->&nbsp;</span>
+
+<h2>Proposal: @Model.Info.Title for @Model.ParentScenario.Title</h2>
+
+<div>
+    @Html.ActionLink("Edit", "EditProposalExample", new { scenarioId = Model.ParentScenario.Id, proposalId = Model.ProposalId })
+</div>
+
+<div>
+    <hr />
+    <h3>Scenario</h3>
+    <markdown content="@Model.ParentScenario.Contents"></markdown>
+</div>
+
+<div>
+    <hr />
+    <h3>Proposal</h3>
+    <markdown content="@Model.Contents"></markdown>
+</div>
+
+<hr />

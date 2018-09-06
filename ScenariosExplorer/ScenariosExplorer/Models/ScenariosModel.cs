@@ -10,7 +10,7 @@ namespace ScenariosExplorer.Models
     {
         public List<ScenarioModel> Scenarios { get; } = new List<ScenarioModel>();
 
-        public static async Task<ScenariosModel> GetAsync(GitHubRepo repo)
+        public static async Task<ScenariosModel> GetAsync(RepoInfo repo)
         {
             var mapModel = await MapModel.GetAsync(repo);
 
@@ -18,7 +18,7 @@ namespace ScenariosExplorer.Models
 
             foreach (var scenario in mapModel.Scenarios)
             {
-                answer.Scenarios.Add(new ScenarioModel(scenario, repo, null));
+                answer.Scenarios.Add(new ScenarioModel(scenario, mapModel, repo, null));
             }
 
             return answer;

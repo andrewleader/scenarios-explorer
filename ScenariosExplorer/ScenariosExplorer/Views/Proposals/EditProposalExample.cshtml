@@ -1,0 +1,69 @@
+﻿@model ScenariosExplorer.Models.AddProposalExampleModel
+
+@{
+    ViewData["Title"] = "Proposal";
+}
+
+@if (ViewBag.Adding != null)
+{
+    <h2>Add proposal example - @Model.Scenario.Title</h2>
+}
+else
+{
+    <h2>Edit proposal example - @Model.Scenario.Title</h2>
+}
+
+<div>
+    <hr />
+
+    <markdown content="@Model.Scenario.Contents"></markdown>
+</div>
+
+<hr />
+<div class="row">
+    <div>
+        <form id="EditForm" asp-action="@ViewBag.FormAction">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @if (ViewBag.Adding != null)
+            {
+                <div class="form-group">
+                    <label for="ProposalSelector" class="control-label">Proposal</label>
+                    <p>This only shows proposals which already don't have an example for this scenario.</p>
+                    <select id="ProposalSelector" asp-for="ProposalId">
+                        @foreach (var info in Model.AvailableProposals)
+                        {
+                            <option value="@info.Id">@info.Title</option>
+                        }
+                    </select>
+                    @Html.ActionLink(linkText: "Create new proposal", actionName: "CreateProposal", controllerName: "Proposals")
+                </div>
+            }
+            <textarea id="HiddenContents" asp-for="Contents" hidden></textarea>
+            <input id="HiddenProposalInfoId" hidden />
+            <input id="HiddenProposalTitle" hidden />
+            <label for="editor">Example solution</label>
+            <div class="editor-frame">
+                <div class="loading editor" style="display: none;">
+                    <div class="progress progress-striped active">
+                        <div class="bar"></div>
+                    </div>
+                </div>
+                <div id="editor" style="height: 400px"></div>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/js/editor.js" asp-append-version="true"></script>
+    <script>
+        $("#EditForm").submit(function (e) {
+            $("#HiddenContents").val(editor.getValue());
+        });
+    </script>
+}

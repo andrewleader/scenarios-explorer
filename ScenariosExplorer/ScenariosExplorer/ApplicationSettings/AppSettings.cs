@@ -7,6 +7,6 @@ namespace ScenariosExplorer.ApplicationSettings
 {
     public static class AppSettings
     {
-        public static GitHubRepo DefaultGitHubRepo { get; set; }
+        public static RepoInfo DefaultGitHubRepo { get; set; }
     }
 }

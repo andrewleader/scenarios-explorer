@@ -1,17 +1,19 @@
-﻿@model ScenariosExplorer.Models.ScenarioModel
+﻿@model ScenariosExplorer.Models.ProposalModel
 
 @{
-    ViewData["Title"] = "EditScenario";
+    ViewData["Title"] = "Proposal";
 }
 
 @if (ViewBag.Adding != null)
 {
-    <h2>Add scenario</h2>
+<h2>Create new proposal</h2>
 }
 else
 {
-    <h2>Edit scenario</h2>
+<h2>Edit proposal</h2>
 }
+
+<p>A proposal is something that can span multiple scenarios. For example, a "Header" proposal could potentially solve scaling, converged content payload, etc. If you have a new proposal, create one, and then you'll be able to add examples for each of your proposals.</p>
 
 <hr />
 <div class="row">
@@ -23,13 +25,8 @@ else
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Summary" class="control-label"></label>
-                <input asp-for="Summary" class="form-control" />
-                <span asp-validation-for="Summary" class="text-danger"></span>
-            </div>
             <textarea id="HiddenContents" asp-for="Contents" hidden></textarea>
-            <label for="editor">Contents</label>
+            <label for="editor">Summary</label>
             <div class="editor-frame">
                 <div class="loading editor" style="display: none;">
                     <div class="progress progress-striped active">
