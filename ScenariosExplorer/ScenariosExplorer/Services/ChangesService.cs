@@ -40,11 +40,11 @@ namespace ScenariosExplorer.Services
                 repository.Commit("Changes", new Signature("scenarios-explorer", "scenarios-explorer@microsoft.com", DateTime.UtcNow), new Signature("scenarios-explorer", "scenarios-explorer@microsoft.com", DateTime.UtcNow));
 
                 // For now, we're going to skip pushing changes since VSO is down
-                //var remote = repository.Network.Remotes["origin"];
-                //repository.Network.Push(remote, pushRefSpec: "refs/heads/master", pushOptions: new PushOptions()
-                //{
-                //    CredentialsProvider = new CredentialsHandler(CredentialsProvider)
-                //});
+                var remote = repository.Network.Remotes["origin"];
+                repository.Network.Push(remote, pushRefSpec: "refs/heads/master", pushOptions: new PushOptions()
+                {
+                    CredentialsProvider = new CredentialsHandler(CredentialsProvider)
+                });
             }
         }
 
