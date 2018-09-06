@@ -57,11 +57,14 @@ namespace ScenariosExplorer.Controllers
                 Title = model.Title
             });
 
-            await map.SaveAsync();
+            using (await LockingService.LockAsync())
+            {
+                await map.SaveAsync();
 
-            await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
+                await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
 
-            ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChanges();
+                await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+            }
 
             dynamic parameters = new ExpandoObject();
             parameters.id = id;
@@ -95,11 +98,14 @@ namespace ScenariosExplorer.Controllers
             {
                 existing.Title = model.Title;
 
-                await map.SaveAsync();
+                using (await LockingService.LockAsync())
+                {
+                    await map.SaveAsync();
 
-                await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
 
-                ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChanges();
+                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                }
             }
 
             dynamic parameters = new ExpandoObject();
@@ -175,11 +181,14 @@ namespace ScenariosExplorer.Controllers
 
                 parent.ProposalExamples.Add(newProposal);
 
-                await map.SaveAsync();
+                using (await LockingService.LockAsync())
+                {
+                    await map.SaveAsync();
 
-                await BaseContentsModel.SaveContentsAsync(parent.Id + "-" + model.ProposalId, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await BaseContentsModel.SaveContentsAsync(parent.Id + "-" + model.ProposalId, AppSettings.DefaultGitHubRepo, model.Contents);
 
-                ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChanges();
+                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                }
             }
 
             dynamic parameters = new ExpandoObject();
@@ -234,9 +243,12 @@ namespace ScenariosExplorer.Controllers
                 return NotFound();
             }
 
-            await BaseContentsModel.SaveContentsAsync(proposalExample.Id, AppSettings.DefaultGitHubRepo, model.Contents);
+            using (await LockingService.LockAsync())
+            {
+                await BaseContentsModel.SaveContentsAsync(proposalExample.Id, AppSettings.DefaultGitHubRepo, model.Contents);
 
-            ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChanges();
+                await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+            }
 
             dynamic parameters = new ExpandoObject();
             parameters.scenarioId = scenarioId;

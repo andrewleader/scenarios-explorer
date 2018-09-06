@@ -56,11 +56,14 @@ namespace ScenariosExplorer.Controllers
                 mapScenario.Title = model.Title;
                 mapScenario.Summary = model.Summary;
 
-                await map.SaveAsync();
+                using (await LockingService.LockAsync())
+                {
+                    await map.SaveAsync();
 
-                await ScenarioModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await ScenarioModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
 
-                ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChanges();
+                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                }
             }
 
             dynamic parameters = new ExpandoObject();
@@ -100,11 +103,14 @@ namespace ScenariosExplorer.Controllers
 
                 parent.Children.Add(newScenario);
 
-                await map.SaveAsync();
+                using (await LockingService.LockAsync())
+                {
+                    await map.SaveAsync();
 
-                await ScenarioModel.SaveContentsAsync(newScenario.Id, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await ScenarioModel.SaveContentsAsync(newScenario.Id, AppSettings.DefaultGitHubRepo, model.Contents);
 
-                ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChanges();
+                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                }
 
                 dynamic parameters = new ExpandoObject();
                 parameters.id = newScenario.Id;

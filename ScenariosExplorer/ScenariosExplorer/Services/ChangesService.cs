@@ -22,29 +22,36 @@ namespace ScenariosExplorer.Services
             return new ChangesService(repo);
         }
 
-        public void PushChanges()
+        public async Task PushChangesAsync()
         {
-            using (var repository = new Repository(ContentService.GetRepoFolder(Repo)))
+            try
             {
-                var status = repository.RetrieveStatus();
-                var filePaths = status.Modified.Select(i => i.FilePath).Union(status.Untracked.Select(i => i.FilePath)).ToList();
-                if (!filePaths.Any())
+                using (var repository = new Repository(ContentService.GetRepoFolder(Repo)))
                 {
-                    return;
-                }
-                foreach (var p in filePaths)
-                {
-                    repository.Index.Add(p);
-                }
+                    var status = repository.RetrieveStatus();
+                    var filePaths = status.Modified.Select(i => i.FilePath).Union(status.Untracked.Select(i => i.FilePath)).ToList();
+                    if (!filePaths.Any())
+                    {
+                        return;
+                    }
+                    foreach (var p in filePaths)
+                    {
+                        repository.Index.Add(p);
+                    }
 
-                repository.Commit("Changes", new Signature("scenarios-explorer", "scenarios-explorer@microsoft.com", DateTime.UtcNow), new Signature("scenarios-explorer", "scenarios-explorer@microsoft.com", DateTime.UtcNow));
+                    repository.Commit("Changes", new Signature("scenarios-explorer", "scenarios-explorer@microsoft.com", DateTime.UtcNow), new Signature("scenarios-explorer", "scenarios-explorer@microsoft.com", DateTime.UtcNow));
 
-                // For now, we're going to skip pushing changes since VSO is down
-                var remote = repository.Network.Remotes["origin"];
-                repository.Network.Push(remote, pushRefSpec: "refs/heads/master", pushOptions: new PushOptions()
-                {
-                    CredentialsProvider = new CredentialsHandler(CredentialsProvider)
-                });
+                    var remote = repository.Network.Remotes["origin"];
+                    repository.Network.Push(remote, pushRefSpec: "refs/heads/master", pushOptions: new PushOptions()
+                    {
+                        CredentialsProvider = new CredentialsHandler(CredentialsProvider)
+                    });
+                }
+            }
+            catch (LibGit2Sharp.NonFastForwardException)
+            {
+                // Means server has newer commits. Should be a niche case, just delete and drop their changes.
+                await ContentService.DeleteCacheAsync(Repo);
             }
         }
 
