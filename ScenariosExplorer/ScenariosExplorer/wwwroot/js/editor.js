@@ -27,6 +27,7 @@ function loadEditor() {
 
     var oldModel = editor.getModel();
     var newModel = monaco.editor.createModel($("#HiddenContents").val(), "markdown");
+    newModel.updateOptions({ tabSize: 2 });
     editor.setModel(newModel);
     if (oldModel) {
         oldModel.dispose();
