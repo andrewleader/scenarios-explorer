@@ -22,7 +22,10 @@
 
 <div>
     <hr />
-    <h3 id="solution">Solution <span style="font-size: initial">(@Html.ActionLink("Edit", "EditProposalExample", new { scenarioId = Model.ParentScenario.Id, proposalId = Model.ProposalId }))</span></h3>
+    <h3 id="solution">Solution <span style="font-size: initial">
+    (@Html.ActionLink("Edit", actionName: "EditProposalExample", controllerName: "Proposals", protocol: null, hostname: null, fragment: "EditForm", routeValues: new { scenarioId = Model.ParentScenario.Id, proposalId = Model.ProposalId }, htmlAttributes: null))
+          </span>
+    </h3>
     <markdown content="@Model.Contents"></markdown>
 </div>
 

@@ -42,7 +42,7 @@
 
 <hr />
 
-<h3>Proposals</h3>
+<h3>Proposal solutions</h3>
 
 @if (Model.Proposals != null)
 {
@@ -53,5 +53,5 @@
 }
 
 <div>
-    @Html.ActionLink(linkText: "Add proposal example", actionName: "AddProposalExample", controllerName: "Proposals", routeValues: new { scenarioId = Model.Id })
+    @Html.ActionLink("Add proposal solution", actionName: "AddProposalExample", controllerName: "Proposals", protocol: null, hostname: null, fragment: "EditForm", routeValues: new { scenarioId = Model.Id }, htmlAttributes: null)
 </div>
