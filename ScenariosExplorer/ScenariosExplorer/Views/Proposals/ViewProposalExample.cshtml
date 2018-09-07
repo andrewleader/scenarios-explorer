@@ -16,18 +16,13 @@
 <h2>Proposal: @Model.Info.Title for @Model.ParentScenario.Title</h2>
 
 <div>
-    @Html.ActionLink("Edit", "EditProposalExample", new { scenarioId = Model.ParentScenario.Id, proposalId = Model.ProposalId })
-</div>
-
-<div>
     <hr />
-    <h3>Scenario</h3>
     <markdown content="@Model.ParentScenario.Contents"></markdown>
 </div>
 
 <div>
     <hr />
-    <h3>Proposal</h3>
+    <h3 id="solution">Solution <span style="font-size: initial">(@Html.ActionLink("Edit", "EditProposalExample", new { scenarioId = Model.ParentScenario.Id, proposalId = Model.ProposalId }))</span></h3>
     <markdown content="@Model.Contents"></markdown>
 </div>
 
