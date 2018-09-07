@@ -25,7 +25,7 @@ namespace ScenariosExplorer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            AppSettings.DefaultGitHubRepo = Configuration.GetSection("DefaultGitHubRepo").Get<RepoInfo>();
+            AppSettings.DefaultRepo = Configuration.GetSection("DefaultRepo").Get<RepoInfo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

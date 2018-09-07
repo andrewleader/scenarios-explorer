@@ -15,13 +15,13 @@ namespace ScenariosExplorer.Controllers
         [Route("proposals")]
         public async Task<IActionResult> ViewProposals()
         {
-            return View(await ProposalsModel.GetAsync(AppSettings.DefaultGitHubRepo));
+            return View(await ProposalsModel.GetAsync(AppSettings.DefaultRepo));
         }
 
         [Route("proposals/{id}")]
         public async Task<IActionResult> ViewProposal(string id)
         {
-            var proposal = await ProposalModel.GetAsync(AppSettings.DefaultGitHubRepo, id);
+            var proposal = await ProposalModel.GetAsync(AppSettings.DefaultRepo, id);
             if (proposal == null)
             {
                 return Redirect("/proposals");
@@ -44,7 +44,7 @@ namespace ScenariosExplorer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateProposal(ProposalModel model)
         {
-            var map = await MapModel.GetAsync(AppSettings.DefaultGitHubRepo);
+            var map = await MapModel.GetAsync(AppSettings.DefaultRepo);
 
             var id = Guid.NewGuid().ToString();
             if (map.Proposals == null)
@@ -61,9 +61,9 @@ namespace ScenariosExplorer.Controllers
             {
                 await map.SaveAsync();
 
-                await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
+                await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultRepo, model.Contents);
 
-                await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                await ChangesService.Get(AppSettings.DefaultRepo).PushChangesAsync();
             }
 
             dynamic parameters = new ExpandoObject();
@@ -74,7 +74,7 @@ namespace ScenariosExplorer.Controllers
         [Route("proposals/{id}/edit")]
         public async Task<IActionResult> EditProposal(string id)
         {
-            var proposal = await ProposalModel.GetAsync(AppSettings.DefaultGitHubRepo, id);
+            var proposal = await ProposalModel.GetAsync(AppSettings.DefaultRepo, id);
             if (proposal == null)
             {
                 return Redirect("/proposals");
@@ -91,7 +91,7 @@ namespace ScenariosExplorer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProposal(string id, ProposalModel model)
         {
-            var map = await MapModel.GetAsync(AppSettings.DefaultGitHubRepo);
+            var map = await MapModel.GetAsync(AppSettings.DefaultRepo);
 
             var existing = map.Proposals?.FirstOrDefault(i => i.Id == id);
             if (existing != null)
@@ -102,9 +102,9 @@ namespace ScenariosExplorer.Controllers
                 {
                     await map.SaveAsync();
 
-                    await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await BaseContentsModel.SaveContentsAsync(id, AppSettings.DefaultRepo, model.Contents);
 
-                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                    await ChangesService.Get(AppSettings.DefaultRepo).PushChangesAsync();
                 }
             }
 
@@ -116,7 +116,7 @@ namespace ScenariosExplorer.Controllers
         [Route("scenarios/{scenarioId}/proposals/{proposalId}")]
         public async Task<IActionResult> ViewProposalExample(string scenarioId, string proposalId)
         {
-            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultGitHubRepo, scenarioId);
+            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultRepo, scenarioId);
             if (scenario == null)
             {
                 return RedirectToAction(nameof(ScenariosController.Index), nameof(ScenariosController));
@@ -136,11 +136,11 @@ namespace ScenariosExplorer.Controllers
         [Route("scenarios/{scenarioId}/addproposalexample")]
         public async Task<IActionResult> AddProposalExample(string scenarioId)
         {
-            var map = await MapModel.GetAsync(AppSettings.DefaultGitHubRepo);
+            var map = await MapModel.GetAsync(AppSettings.DefaultRepo);
 
             var model = new AddProposalExampleModel();
 
-            model.Scenario = await ScenarioModel.GetAsync(AppSettings.DefaultGitHubRepo, scenarioId);
+            model.Scenario = await ScenarioModel.GetAsync(AppSettings.DefaultRepo, scenarioId);
             if (model.Scenario == null)
             {
                 return RedirectToAction(controllerName: nameof(ScenariosController), actionName: nameof(ScenariosController.Index));
@@ -165,7 +165,7 @@ namespace ScenariosExplorer.Controllers
                 throw new Exception("You must pick a proposal");
             }
 
-            var map = await MapModel.GetAsync(AppSettings.DefaultGitHubRepo);
+            var map = await MapModel.GetAsync(AppSettings.DefaultRepo);
             var parent = map.FindScenario(scenarioId);
             if (parent != null)
             {
@@ -185,9 +185,9 @@ namespace ScenariosExplorer.Controllers
                 {
                     await map.SaveAsync();
 
-                    await BaseContentsModel.SaveContentsAsync(parent.Id + "-" + model.ProposalId, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await BaseContentsModel.SaveContentsAsync(parent.Id + "-" + model.ProposalId, AppSettings.DefaultRepo, model.Contents);
 
-                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                    await ChangesService.Get(AppSettings.DefaultRepo).PushChangesAsync();
                 }
             }
 
@@ -200,7 +200,7 @@ namespace ScenariosExplorer.Controllers
         [Route("scenarios/{scenarioId}/editproposalexample/{proposalId}")]
         public async Task<IActionResult> EditProposalExample(string scenarioId, string proposalId)
         {
-            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultGitHubRepo, scenarioId);
+            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultRepo, scenarioId);
             if (scenario == null)
             {
                 return NotFound();
@@ -231,7 +231,7 @@ namespace ScenariosExplorer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditProposalExample(string scenarioId, string proposalId, AddProposalExampleModel model)
         {
-            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultGitHubRepo, scenarioId);
+            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultRepo, scenarioId);
             if (scenario == null)
             {
                 return NotFound();
@@ -245,9 +245,9 @@ namespace ScenariosExplorer.Controllers
 
             using (await LockingService.LockAsync())
             {
-                await BaseContentsModel.SaveContentsAsync(proposalExample.Id, AppSettings.DefaultGitHubRepo, model.Contents);
+                await BaseContentsModel.SaveContentsAsync(proposalExample.Id, AppSettings.DefaultRepo, model.Contents);
 
-                await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                await ChangesService.Get(AppSettings.DefaultRepo).PushChangesAsync();
             }
 
             dynamic parameters = new ExpandoObject();

@@ -38,7 +38,7 @@ namespace ScenariosExplorer.Controllers
 
         public async Task<IActionResult> Refresh()
         {
-            await ContentService.DeleteCacheAsync(AppSettings.DefaultGitHubRepo);
+            await ContentService.DeleteCacheAsync(AppSettings.DefaultRepo);
             return RedirectToAction(actionName: nameof(ScenariosController.Index), controllerName: "Scenarios");
         }
     }

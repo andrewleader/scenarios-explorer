@@ -14,13 +14,13 @@ namespace ScenariosExplorer.Controllers
     {
         public async Task<IActionResult> Index()
         {
-            return View(await ScenariosModel.GetAsync(AppSettings.DefaultGitHubRepo));
+            return View(await ScenariosModel.GetAsync(AppSettings.DefaultRepo));
         }
 
         [Route("scenarios/{id}")]
         public async Task<IActionResult> ViewScenario(string id)
         {
-            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultGitHubRepo, id);
+            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultRepo, id);
             if (scenario == null)
             {
                 return Redirect("/scenarios");
@@ -33,7 +33,7 @@ namespace ScenariosExplorer.Controllers
         [Route("scenarios/{id}/edit")]
         public async Task<IActionResult> EditScenario(string id)
         {
-            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultGitHubRepo, id);
+            var scenario = await ScenarioModel.GetAsync(AppSettings.DefaultRepo, id);
             if (scenario == null)
             {
                 return Redirect("/scenarios");
@@ -49,7 +49,7 @@ namespace ScenariosExplorer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditScenario(string id, ScenarioModel model)
         {
-            var map = await MapModel.GetAsync(AppSettings.DefaultGitHubRepo);
+            var map = await MapModel.GetAsync(AppSettings.DefaultRepo);
             var mapScenario = map.FindScenario(id);
             if (mapScenario != null)
             {
@@ -60,9 +60,9 @@ namespace ScenariosExplorer.Controllers
                 {
                     await map.SaveAsync();
 
-                    await ScenarioModel.SaveContentsAsync(id, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await ScenarioModel.SaveContentsAsync(id, AppSettings.DefaultRepo, model.Contents);
 
-                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                    await ChangesService.Get(AppSettings.DefaultRepo).PushChangesAsync();
                 }
             }
 
@@ -85,7 +85,7 @@ namespace ScenariosExplorer.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddChildScenario(string parentId, ScenarioModel model)
         {
-            var map = await MapModel.GetAsync(AppSettings.DefaultGitHubRepo);
+            var map = await MapModel.GetAsync(AppSettings.DefaultRepo);
             var parent = map.FindScenario(parentId);
             if (parent != null)
             {
@@ -107,9 +107,9 @@ namespace ScenariosExplorer.Controllers
                 {
                     await map.SaveAsync();
 
-                    await ScenarioModel.SaveContentsAsync(newScenario.Id, AppSettings.DefaultGitHubRepo, model.Contents);
+                    await ScenarioModel.SaveContentsAsync(newScenario.Id, AppSettings.DefaultRepo, model.Contents);
 
-                    await ChangesService.Get(AppSettings.DefaultGitHubRepo).PushChangesAsync();
+                    await ChangesService.Get(AppSettings.DefaultRepo).PushChangesAsync();
                 }
 
                 dynamic parameters = new ExpandoObject();
