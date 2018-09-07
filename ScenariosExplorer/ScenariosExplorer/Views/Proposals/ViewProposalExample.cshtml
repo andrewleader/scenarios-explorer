@@ -22,11 +22,30 @@
 
 <div>
     <hr />
-    <h3 id="solution">Solution <span style="font-size: initial">
-    (@Html.ActionLink("Edit", actionName: "EditProposalExample", controllerName: "Proposals", protocol: null, hostname: null, fragment: "EditForm", routeValues: new { scenarioId = Model.ParentScenario.Id, proposalId = Model.ProposalId }, htmlAttributes: null))
-          </span>
+    <h3 id="solution">
+        Solution <span style="font-size: initial">
+            (@Html.ActionLink("Edit", actionName: "EditProposalExample", controllerName: "Proposals", protocol: null, hostname: null, fragment: "EditForm", routeValues: new { scenarioId = Model.ParentScenario.Id, proposalId = Model.ProposalId }, htmlAttributes: null))
+        </span>
     </h3>
     <markdown content="@Model.Contents"></markdown>
 </div>
 
 <hr />
+
+<h3>Other proposal solutions</h3>
+
+@if (Model.ParentScenario?.Proposals != null)
+{
+    var otherProposals = Model.ParentScenario.Proposals.Where(i => i != Model).ToList();
+    if (otherProposals.Any())
+    {
+        @foreach (var p in otherProposals)
+        {
+            @Html.Partial("/Views/Proposals/_ProposalExampleListItem.cshtml", p);
+        }
+    }
+}
+
+<div>
+    @Html.ActionLink("Add proposal solution", actionName: "AddProposalExample", controllerName: "Proposals", protocol: null, hostname: null, fragment: "EditForm", routeValues: new { scenarioId = Model.ParentScenario.Id }, htmlAttributes: null)
+</div>
